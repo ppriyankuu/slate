@@ -6,7 +6,7 @@ export async function classifyImage(imageFile: File) {
     try {
         const output = await client.imageClassification({
             data: imageFile,
-            model: "google/vit-base-patch16-384",
+            model: "julien-c/hotdog-not-hotdog",
         });
 
         return output;
