@@ -8,7 +8,11 @@ export default function Home() {
 
   const createSession = () => {
     const uniqueId = generateSessionId();
+<<<<<<< HEAD
     router.push(`/session/${uniqueId}`);
+=======
+    router.push(`/live/${uniqueId}`);
+>>>>>>> 953f09123aebf7f53b6db1d439488dca86639d71
   };
 
   return (

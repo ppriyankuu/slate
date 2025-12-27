@@ -26,7 +26,11 @@ export interface Session {
 }
 
 // message types for websocket communication
+<<<<<<< HEAD
 export type ClientMessage = { type: 'join'; sessionCode: string ; userId: string } | { type: 'update'; code: string };
+=======
+export type ClientMessage = { type: 'join'; sessionCode: string } | { type: 'update'; code: string };
+>>>>>>> 953f09123aebf7f53b6db1d439488dca86639d71
 
 // all the type of actions the server will be performing
 export type ServerMessage =
