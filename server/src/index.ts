@@ -40,7 +40,21 @@ wss.on("connection", (socket, req) => {
                 role: user.role,
                 code: getSessionCode(message.sessionCode),
 
-            }))
+            }));
+            //Broadcast the user list
+            // 1. Get the latest list of users in this session
+            const users = getSessionUsers(message.sessionCode);
+
+            // 2. Loop through all clients currently in this session
+            session.clients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN) {
+                    // 3. Send the 'userList' type message to everyone
+                    client.send(JSON.stringify({
+                        type: 'userList',
+                        users: users
+                    }));
+                }
+            });
         }
 
         //update logic
@@ -52,8 +66,9 @@ wss.on("connection", (socket, req) => {
 
             //save the update code
             updateSessionCode(sessionId, message.code);
+
             //now brodcast to every user except the one who sends
-            const session = getOrCreateSession(message.sessionCode);
+            const session = getOrCreateSession(sessionId);
 
             session.clients.forEach((client, uid) => {
                 if (uid !== userId && client.readyState === WebSocket.OPEN) {
@@ -73,7 +88,20 @@ wss.on("connection", (socket, req) => {
         if (!meta) return;
         removeUserFromSession(meta.sessionId, meta.userId);
 
-        socketMeta.delete(socket)
+        //brodcasting the user list
+        const session = getOrCreateSession(meta.sessionId);
+        const users = getSessionUsers(meta.sessionId);
+        session.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({
+                    type: 'userList',
+                    users: users
+                }));
+            }
+        });
+
+        socketMeta.delete(socket);
     });
+    
 });
 
