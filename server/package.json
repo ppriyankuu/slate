@@ -12,5 +12,8 @@
   "packageManager": "pnpm@10.25.0",
   "dependencies": {
     "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.1"
   }
 }

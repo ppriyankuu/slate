@@ -12,6 +12,7 @@ export function getOrCreateSession(sessionId: string): Session {
             codeContent: '// Start coding together!',
             users: new Map(),
             usedUsernames: new Set(),
+            clients:new Map(), //Server should know where to send the update code
         });
     }
 
@@ -49,6 +50,7 @@ export function removeUserFromSession(sessionId: string, userId: string): { user
 
     session.users.delete(userId);
     session.usedUsernames.delete(user.username);
+    session.clients.delete(userId) // delete the client also
 
     if (session.users.size === 0) {
         sessions.delete(sessionId);
