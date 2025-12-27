@@ -1,3 +1,5 @@
+import type WebSocket from "ws";
+
 export type UserRole = 'editor' | 'viewer';
 
 // fixed list of random usernames (because this app is a no-auth platform)
@@ -20,6 +22,7 @@ export interface Session {
     codeContent: string;
     users: Map<string, SessionUser>;
     usedUsernames: Set<string>;
+    clients: Map<string, WebSocket>
 }
 
 // message types for websocket communication
