@@ -41,23 +41,48 @@ export function addUserToSession(sessionId: string, userId: string): SessionUser
     return user;
 }
 
-export function removeUserFromSession(sessionId: string, userId: string): { username: string, usersLeft: number } | null {
+export function removeUserFromSession(
+    sessionId: string,
+    userId: string
+): {
+    username: string,
+    usersLeft: number
+    promotedUser?: SessionUser;
+} | null {
     const session = sessions.get(sessionId);
     if (!session) return null;
 
     const user = session.users.get(userId);
     if (!user) return null;
 
+    const wasEditor = user.role === 'editor';
+    let promotedUser: SessionUser | undefined;
+
     session.users.delete(userId);
     session.usedUsernames.delete(user.username);
     session.clients.delete(userId) // delete the client also
+
+    if (wasEditor) {
+        const editorsCount = Array.from(session.users.values())
+            .filter(u => u.role === "editor").length;
+
+        if (editorsCount < 2) {
+            for (const candidate of session.users.values()) {
+                if (candidate.role === "viewer") {
+                    candidate.role = "editor";
+                    promotedUser = candidate;
+                    break; // only one is promoted
+                }
+            }
+        }
+    }
 
     if (session.users.size === 0) {
         sessions.delete(sessionId);
         return { username: user.username, usersLeft: 0 };
     }
 
-    return { username: user.username, usersLeft: session.users.size };
+    return { username: user.username, usersLeft: session.users.size, promotedUser };
 }
 
 export function updateSessionCode(sessionId: string, newCode: string): void {

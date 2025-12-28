@@ -102,6 +102,13 @@ wss.on("connection", (socket: WebSocket) => {
             message: `${result.username} left the session`
         });
 
+        if (result.promotedUser) {
+            broadcast(sessionId, {
+                type: "NOTIFICATION",
+                message: `${result.promotedUser.username} got promoted to editor`,
+            });
+        }
+
         broadcast(sessionId, {
             type: "USER_LIST",
             users: getSessionUsers(sessionId),

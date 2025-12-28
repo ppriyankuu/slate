@@ -15,7 +15,7 @@ export default function SessionPage() {
     const [code, setCode] = useState('// Start coding together!');
     const [currentUser, setCurrentUser] = useState<SessionUser | null>(null);
     const [users, setUsers] = useState<SessionUser[]>([]);
-    const [notification, setNofication] = useState<string | null>(null);
+    const [notifications, setNotifications] = useState<string[]>([]);
     const wsRef = useRef<WebSocket | null>(null);
 
     useEffect(() => {
@@ -56,11 +56,24 @@ export default function SessionPage() {
                     break;
                 }
                 case "NOTIFICATION": {
-                    setNofication(message.message);
+                    setNotifications(prev => [...prev, message.message]);
                     break;
                 }
                 case "USER_LIST": {
                     setUsers(message.users);
+
+                    setCurrentUser(prev => {
+                        if (!prev) return null;
+
+                        const updatedSelf = message.users.find(
+                            u => u.username === prev.username
+                        );
+
+                        return updatedSelf
+                            ? { ...prev, role: updatedSelf.role }
+                            : prev;
+                    });
+
                     break;
                 }
                 default: {
@@ -68,7 +81,7 @@ export default function SessionPage() {
             }
         };
 
-        ws.onerror = (error) => {
+        ws.onerror = () => {
             console.warn("WebSocket error event (browser gives no details)");
         };
 
@@ -76,7 +89,7 @@ export default function SessionPage() {
             console.log("WS closed", event.code, event.reason);
 
             if (currentUser) {
-                setNofication("Disconnected from session");
+                setNotifications(prev => [...prev, "Disconnected from session"]);
             }
         };
 
@@ -88,10 +101,14 @@ export default function SessionPage() {
 
     // for auto-clearing notification
     useEffect(() => {
-        if (!notification) return;
-        const t = setTimeout(() => setNofication(null), 2500);
-        return () => clearTimeout(t);
-    }, [notification]);
+        if (notifications.length === 0) return;
+
+        const timer = setTimeout(() => {
+            setNotifications(prev => prev.slice(1));
+        }, 2500);
+
+        return () => clearTimeout(timer);
+    }, [notifications]);
 
     const handleCodeChange = (newCode: string) => {
         if (currentUser?.role !== "editor") return;
@@ -108,7 +125,7 @@ export default function SessionPage() {
 
     const copyToClipboard = (message: string) => {
         navigator.clipboard.writeText(message);
-        setNofication('Code copied to clipboard!');
+        setNotifications(prev => [...prev, 'Code copied to clipboard!']);
     };
 
     if (!currentUser) {
@@ -121,30 +138,37 @@ export default function SessionPage() {
 
     return (
         <div className="min-h-screen bg-neutral-950 text-neutral-100 p-4">
-            <Notification message={notification} />
+            <Notification
+                message={notifications[0]}
+                onClose={() => setNotifications(prev => prev.slice(1))} />
+            <header className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+                    <h1 className="text-lg sm:text-xl font-bold break-all">
+                        Session: {sessionCode}
+                    </h1>
 
-            <header className="flex justify-between items-center mb-6">
-                <div className="flex gap-3 items-center justify-between">
-                    <h1 className="text-xl font-bold">Session: {sessionCode}</h1>
                     <button
                         onClick={() => copyToClipboard(sessionCode)}
-                        className="text-sm bg-neutral-700 hover:bg-neutral-600 px-2 py-1 rounded"
+                        className="w-fit text-sm bg-neutral-700 hover:bg-neutral-600 px-3 py-1.5 rounded"
                     >
                         Copy Session Code
                     </button>
                 </div>
-                <div className="flex gap-2">
-                    <span className="text-sm bg-emerald-900 px-2 py-1 rounded">
+
+                <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap sm:justify-end">
+                    <span className="text-sm bg-emerald-900 px-3 py-1.5 rounded truncate max-w-full">
                         You: {currentUser.username} ({currentUser.role})
                     </span>
+
                     <button
                         onClick={() => router.push('/')}
-                        className="text-sm text-neutral-400 hover:text-white"
+                        className="text-sm text-neutral-400 hover:text-white px-2 py-1"
                     >
                         Leave
                     </button>
                 </div>
             </header>
+
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 <div className="lg:col-span-3">
@@ -153,7 +177,7 @@ export default function SessionPage() {
                             <span className="text-sm text-neutral-400">Code</span>
                             <button
                                 onClick={() => copyToClipboard(code)}
-                                className="text-sm bg-neutral-700 hover:bg-neutral-600 px-2 py-1 rounded"
+                                className="cursor-pointer text-sm bg-neutral-700 hover:bg-neutral-600 px-2 py-1 rounded"
                             >
                                 Copy Code
                             </button>

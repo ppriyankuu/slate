@@ -21,10 +21,12 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-neutral-950 flex flex-col items-center justify-center p-4">
       <div className="text-center max-w-md w-full">
-        <h1 className="text-3xl font-bold text-white mb-6">Slate 🎴</h1>
+        <h1 className="text-3xl font-bold text-white mb-6">Slate🎴</h1>
 
         <p className="text-neutral-400 mb-8">
-          Create a document or join an existing session to pair program live.
+          Create a document or join an existing session to {' '}
+          <br className="hidden md:block" />
+          pair program live.
         </p>
 
         {/* Create session */}

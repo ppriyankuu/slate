@@ -1,6 +1,5 @@
 import { SessionUser } from '@/lib/types';
 
-// Tailwind-safe color classes
 const COLORS = [
     'bg-emerald-500',
     'bg-sky-500',
@@ -12,15 +11,6 @@ const COLORS = [
     'bg-fuchsia-500',
 ];
 
-// simple string hash → number
-function getColorClass(username: string) {
-    let hash = 0;
-    for (let i = 0; i < username.length; i++) {
-        hash = username.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return COLORS[Math.abs(hash) % COLORS.length];
-}
-
 export function UserList({ users }: { users: SessionUser[] }) {
     return (
         <div className="bg-neutral-800 p-3 rounded-md">
@@ -30,11 +20,11 @@ export function UserList({ users }: { users: SessionUser[] }) {
 
             <ul className="space-y-1">
                 {users.map((user, index) => {
-                    const color = getColorClass(user.username);
+                    const color = COLORS[index % COLORS.length];
 
                     return (
                         <li
-                            key={index}
+                            key={user.username}
                             className="flex items-center gap-2"
                         >
                             <span
@@ -53,3 +43,4 @@ export function UserList({ users }: { users: SessionUser[] }) {
         </div>
     );
 }
+
