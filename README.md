@@ -9,7 +9,7 @@ No authentication. No accounts. Just share a session code and start coding.
 
 ### Features
 - No authentication required; join instantly using a session code
-- Real-time code collaboration powered by `WebSockets`
+- Real-time code collaboration with `WebSockets`
 - Maximum of two **editors** per session
 - Additional users join as `read-only` **viewers**
 - Oldest connected `viewer` is promoted when an `editor` leaves
