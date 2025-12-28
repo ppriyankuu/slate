@@ -12,7 +12,7 @@ export function getOrCreateSession(sessionId: string): Session {
             codeContent: '// Start coding together!',
             users: new Map(),
             usedUsernames: new Set(),
-            clients:new Map(), //Server should know where to send the update code
+            clients: new Map(), //Server should know where to send the update code
         });
     }
 
@@ -68,7 +68,7 @@ export function updateSessionCode(sessionId: string, newCode: string): void {
 }
 
 export function getSessionCode(sessionId: string): string {
-    return sessions.get(sessionId)?.codeContent || '';
+    return sessions.get(sessionId)?.codeContent ?? '';
 }
 
 export function getSessionUsers(sessionId: string): SessionUser[] {
