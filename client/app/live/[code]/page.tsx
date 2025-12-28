@@ -27,6 +27,11 @@ export default function SessionPage() {
         }
     }
 
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(code);
+        setNofication('Code copied to clipboard!');
+    };
+
     if (!currentUser) {
         return (
             <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
@@ -60,7 +65,7 @@ export default function SessionPage() {
                         <div className="flex justify-between items-center p-3 bg-neutral-800">
                             <span className="text-sm text-neutral-400">Code</span>
                             <button
-                                onClick={() => { }} // need copyToClipboard function here
+                                onClick={copyToClipboard}
                                 className="text-sm bg-neutral-700 hover:bg-neutral-600 px-2 py-1 rounded"
                             >
                                 Copy Code
