@@ -4,8 +4,9 @@ It allows two users to collaboratively edit code in real time, while additional 
 
 No authentication. No accounts. Just share a session code and start coding.
 
-[!image01](./ss/image02.png)
-[!image02](./ss/image01.png)
+![Screenshot 1](./ss/image02.png)
+![Screenshot 2](./ss/image01.png)
+
 ### Features
 - No authentication required; join instantly using a session code
 - Real-time code collaboration powered by `WebSockets`
