@@ -7,7 +7,7 @@ export interface SessionUser {
 }
 
 export type ServerMessage =
-    | { type: 'init'; code: string; username: string; role: UserRole }
-    | { type: 'update'; code: string }
-    | { type: 'notification'; message: string }
-    | { type: 'userList'; users: SessionUser[] };
+    | { type: 'INIT'; code: string; username: string; role: UserRole }
+    | { type: 'UPDATE'; code: string }
+    | { type: 'NOTIFICATION'; message: string }
+    | { type: 'USER_LIST'; users: SessionUser[] };
